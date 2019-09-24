@@ -1,0 +1,331 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r set-up}
+library(tidyverse)
+install.packages("viridisLite")
+library(viridisLite)
+```
+
+```{r 3.2.1}
+mpg
+?mpg
+```
+
+```{r 3.2.2}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+```{r 3.2.4}
+ggplot(data=mpg)
+#1.The graph is blank.
+#2.They are 234 rows.
+#3. drv describs if the car is 4-wheel drive, front-wheel drive, or rear wheel drive.
+#4.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = hwy, y = cyl))
+#5. The plot is not useful as it does not show any relationship between the numbers of cylinders and highway mileage per gallon.
+```
+
+```{r 3.3}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+```{r 3.3.1}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+#1. The points are not blue because the variable color is attached to the aesthetics of the objects in the plot, not the plot itself.
+#2. Categorical variables in mpg include model, trans, drv, manufacturer, fl, and class.  Continous variables include hwy, cty, year, cyl, and displ. This information is given in the table heading, where it lists the variables as <int>, <chr>, and <dbl>.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y= cty, color = cty, size=displ))
+#3. A continous variable cannot be mapped to shape, yet for shape and color it produces a gradient of color and spectrum of sizes. Compared to continuous, categorical data is cleaner in sense that the plots are discretely placed.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y= cty, color = cty,  size=cty))
+#4. When color and size are mapped to the same varaible, it produces a single gradient of size and color.
+?geom_point
+#5.Stroke aesthetic modifies the width of the # border.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y= cty, color = displ < 5))
+#6. When the aesthetic is mapped to a condition, it provides graph that follows the equation.
+
+```
+
+```{r 3.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+```{r 3.5.1}
+#1. When the facet is placed on a continuous variable, it gives a graph is subsetted to categories of drive and cylinders. 
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl)) +  facet_grid(drv ~ cyl)
+#2.The empty plots represent graphs that do not have any relation between drv and cyl.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+#3. The dot represents an axis, so if it takes an x the non-dot variable is across the y-axis and vice versa.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+#4.Using the facet subsets the data already, making it easy to determine patterns in specific categories. A disadvantage is that it does not 
+?facet_wrap
+?facet_grid
+#5.nrow determines the number of rows and ncol determines the number of columns. Facet_grid() does not have a nrow or ncol arguments because the columns and rows are defined by the faceting variables.
+#6.Using a facet_grid for a variable with unique levels creates a graph that incorpates each level into a separate subset. This would make connections much more clearer.
+```
+
+```{r 3.6}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+    
+ggplot(data = mpg) +
+  geom_smooth(
+    mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth()
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+```
+
+```{r 3.6.1}
+?geom
+#1. geom_smooth for a line chart, geom_box for boxplot, geom_histogram for histogram, and geom_area for area chart.
+#2. The chart will have points that follow along lines that correlate to the color of the drv variable, across disply vs hwy variables.
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+#3. show.legend=FALSE turns off the legend produced in graphs. If it was removed, it would present the legend on the graph. 
+?geom_smooth
+#4. The se argument displays the confidence interval around line. 
+#5. The graphs willnot be different as they both take the same data and push it through the same aesthtics arguments and variables, just through different methods.
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+#6.
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, se=FALSE, mapping = aes(x = displ, y = hwy))
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy,color=drv)) + 
+  geom_smooth(data = mpg, se=FALSE, mapping = aes(x = displ, y = hwy))
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy,color=drv)) + 
+  geom_smooth(data = mpg, se=FALSE, mapping = aes(x = displ, y = hwy, group=drv, color=drv))
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy, color=drv)) + 
+  geom_smooth(data = mpg, se=FALSE, mapping = aes(x = displ, y = hwy, linetype=drv))
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy,color=drv))
+```
+
+```{r 3.7}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+
+ggplot(data = diamonds) + 
+  stat_count(mapping = aes(x = cut))
+
+demo <- tribble(
+  ~cut,         ~freq,
+  "Fair",       1610,
+  "Good",       4906,
+  "Very Good",  12082,
+  "Premium",    13791,
+  "Ideal",      21551
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = cut, y = freq), stat = "identity")
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  )
+```
+
+```{r 3.7.1}
+?stat_summary
+#1. Stat_summary is associated with geom_boxplot, but one can modify it by chaging adding the argument "geom='graph'".
+?geom_col
+#2.geom_col creates a type of barchart that represents values in the data, compared to a geom_bar which is proportional to number of cases. 
+#3.Where do I find this list of geoms and stats?
+?stat_smooth()
+#4. stat_smooth() computes the condtional means same as geom_smooth(), however it can display the calculations with another geom.
+#5.The cause of the error, is that the graph does not have a set of variables for the y-axis.
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop..))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop.., group=1))
+```
+
+```{r 3.8}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
+```
+
+```{r 3.8.1}
+#1. The issue with this plot is that it is a bit misleading, as the plots are overstacking one another.
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy), poisition="count") + 
+  geom_point()
+#2.geom_jitter is controlled by width and height arguments.
+?geom_jitter
+?geom_count
+#3. geom_jitter adds a small amount of random variation to each point while geom_count counts the number of observations for each possibility and then maps it to the point area.
+?geom_boxplot
+#4. Rge default positon for geom_boxplot is "dodge2", perserves the vertical distance, but affects the horizontal spacing. This show as the box plot has overlap on the y-axis, but along the x-axis.
+ggplot(data = mpg, mapping=aes(x=drv, y=hwy))+
+  geom_boxplot()
+```
+
+```{r 3.9}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+
+nz <- map_data("nz")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_quickmap()
+
+bar <- ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+bar + coord_flip()
+bar + coord_polar()
+```
+
+```{r 3.9.1}
+#1.
+bar <- ggplot(data = mpg)+
+  geom_bar(
+    mapping = aes(x = class, fill = class), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+  bar + coord_polar()
+  
+?labs
+#2.labs() create the labels for the graph.
+?coord_quickmap
+?coord_map
+#3.The difference between coord_quickmap and coord_map is that quickmap is an approximation that preserves straight lines, while map projects a portion of the earth on a flat plane.
+?geom_abline
+#4. The plot below indicates that cty and hwy are positively correlated. coord_fixed is important as it fixes the coordinates to a specific place on the graph. geom_abline() creates a reference line that helps illustrate a common trend in the graph.
+  ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() +
+  coord_fixed()
+```
+
+3.10
+
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>),
+     stat = <STAT>, 
+     position = <POSITION>
+  ) +
+  <COORDINATE_FUNCTION> +
+  <FACET_FUNCTION>
+
